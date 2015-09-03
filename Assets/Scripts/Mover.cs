@@ -201,13 +201,16 @@ public class Mover : NetworkBehaviour {
 	void InputMovement(){
 		Vector3 vectorMove = Vector3.zero;
 		if (Input.GetKey (KeyCode.Z)) {
-			vectorMove+=theCamera.transform.forward;
+			Vector3 g = theCamera.transform.forward;
+			g.y=0;
+			vectorMove+=g;
 			//rigidbody.MovePosition (rigidbody.position + theCamera.transform.forward * speed * Time.deltaTime);
 			simultaneousMovement+=1;
 		}
 		if (Input.GetKey (KeyCode.S)) {
-			
-			vectorMove-=theCamera.transform.forward;
+			Vector3 g = theCamera.transform.forward;
+			g.y=0;
+			vectorMove-=g;
 			//rigidbody.MovePosition (rigidbody.position - theCamera.transform.forward * speed * Time.deltaTime);
 			simultaneousMovement +=1;
 		}

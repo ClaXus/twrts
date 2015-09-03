@@ -2,12 +2,15 @@
 using System.Collections;
 using UnityEngine.Networking;
 using UnityEngine.UI;
+using System.Collections.Generic;
 
 public class GameManager : NetworkManager {
 	[SerializeField]
 	public Transform[] spawnPoints;
 
 	public NetworkConnection serverConnection;
+
+	public List<NetworkIdentity> observablesGameObjects; 
 
 	public short connectionNumber=0;
 	private Vector3 spawnPosition;
@@ -28,6 +31,7 @@ public class GameManager : NetworkManager {
 	void Start () {
 		Debug.LogWarning("Start GM");
 		currentState = (int) GameState.PlacementState;
+		List<GameObject> InGameEnnemies = new List<GameObject> ();
 	}	
 
 	void Update(){
@@ -38,6 +42,17 @@ public class GameManager : NetworkManager {
 	public void AddPlayerForAGame(Vector3 spawningPosition){
 		this.spawnPosition = spawningPosition;
 		ClientScene.AddPlayer (serverConnection, connectionNumber);
+	}
+
+	public void AddObservables(NetworkIdentity nI){
+		observablesGameObjects.Add (nI);
+	}
+
+	public void RefreshObservables(){
+		foreach(NetworkIdentity nI in observablesGameObjects){
+			nI.RebuildObservers(true);
+		}
+	
 	}
 
 	public override void OnStartServer() {
@@ -63,6 +78,7 @@ public class GameManager : NetworkManager {
 		Debug.LogWarning("Add Player");
 		GameObject player = (GameObject)Instantiate(playerPrefab, spawnPosition/*spawnPoints[connectionNumber].position*/, Quaternion.identity);
 		NetworkServer.AddPlayerForConnection(conn, player, playerControllerId);
+		RefreshObservables()
 		connectionNumber += 1;
 	}
 

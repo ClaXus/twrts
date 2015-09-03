@@ -49,6 +49,7 @@
      <Compile Include="Assets\Prefabs\Patterns\Jobs\Wizard\JobPattern.cs" />
      <Compile Include="Assets\Scripts\Abilities\Spell.cs" />
      <Compile Include="Assets\Scripts\Abilities\SpellDirected.cs" />
+     <Compile Include="Assets\Scripts\Ally.cs" />
      <Compile Include="Assets\Scripts\FastGameScene.cs" />
      <Compile Include="Assets\Scripts\GameManager.cs" />
      <Compile Include="Assets\Scripts\Mover.cs" />

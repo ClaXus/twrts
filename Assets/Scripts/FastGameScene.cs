@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityEngine.UI;
 using UnityEngine.Networking;
+using System.Collections.Generic;
 
 public class FastGameScene : NetworkBehaviour {
 
@@ -32,6 +33,9 @@ public class FastGameScene : NetworkBehaviour {
 	[SerializeField]
 	GameObject[] myAllies;
 
+	[SerializeField]
+	Transform[] spawnPoints;
+	
 	private float targetTime = 4f;
 	private int currentState;
 	
@@ -46,8 +50,11 @@ public class FastGameScene : NetworkBehaviour {
 
 	private int numberOfSpawns=0;
 	
+	public List<GameObject> InGameEnnemies;
+
 	void Start () {
 		currentState = (int)GameState.PlacementState;
+		List<GameObject> InGameEnnemies = new List<GameObject> ();
 		hideOrShowGameUiOnF ();
 		panelButtons.gameObject.SetActive (false);
 		placementCamera.enabled = true;
@@ -69,8 +76,18 @@ public class FastGameScene : NetworkBehaviour {
 					}
 				}
 				else if(numberOfSpawns < 4){
-					
-
+					RaycastHit hit;
+					if (Physics.Raycast (placementCamera.ScreenPointToRay (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0)), out hit)) {
+						spawnPosition = hit.point;
+						spawnPosition.y += 1;
+						//gM.AddPlayerForAGame(spawnPosition);
+						myAllies[numberOfSpawns-1] =(GameObject) Instantiate(myAllies[numberOfSpawns-1], spawnPosition, spawnPoints[0].rotation);
+						NetworkServer.Spawn(myAllies[numberOfSpawns-1]);
+						gM.AddObservables(myAllies[numberOfSpawns-1].GetComponent<NetworkIdentity>());
+						numberOfSpawns +=1;
+					}
+					//myAllies[numberOfSpawns-1] =(GameObject) Instantiate(myAllies[numberOfSpawns-1], spawnPoints[numberOfSpawns-1].position, spawnPoints[numberOfSpawns-1].rotation);
+					//numberOfSpawns+=1;
 				}
 			}
 
