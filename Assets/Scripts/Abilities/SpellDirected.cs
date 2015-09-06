@@ -15,6 +15,10 @@ public class SpellDirected : Spell {
     [SerializeField]
     int _value;
 
+	private bool canGo=false;
+
+	private Vector3 direction;
+
     public int value
     {
         get { return _value; }

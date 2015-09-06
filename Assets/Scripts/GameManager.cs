@@ -13,6 +13,9 @@ public class GameManager : NetworkManager {
 	public List<NetworkIdentity> observablesGameObjects; 
 
 	public short connectionNumber=0;
+
+	public GameObject HostList;
+
 	private Vector3 spawnPosition;
 
 	public enum GameState{
@@ -39,13 +42,22 @@ public class GameManager : NetworkManager {
 
 	}
 
-	public void AddPlayerForAGame(Vector3 spawningPosition){
+	public GameObject AddPlayerForAGame(Vector3 spawningPosition){
 		this.spawnPosition = spawningPosition;
 		ClientScene.AddPlayer (serverConnection, connectionNumber);
+		return currentPlayerIG;
 	}
 
 	public void AddObservables(NetworkIdentity nI){
 		observablesGameObjects.Add (nI);
+	}
+
+	public GameObject AddAlly(ref GameObject[] myAllies, int nb, Vector3 SpawnPosition){
+		GameObject tempGO = (GameObject) Instantiate(myAllies[nb-1], spawnPosition, spawnPoints[0].rotation);
+		NetworkServer.Spawn(myAllies[nb-1]);
+		AddObservables(myAllies[nb-1].GetComponent<NetworkIdentity>());
+		return tempGO;
+	
 	}
 
 	public void RefreshObservables(){
@@ -60,10 +72,22 @@ public class GameManager : NetworkManager {
 			
 	}
 
+	public void StartParty(){
+		//StartHost ();
+	}
+
+	public void RefreshHostList(){
+		//StartMatchMaker ();
+
+
+	}
+
+
+
 	public override void OnStartClient (NetworkClient client)
 	{
 		Debug.LogWarning ("START CLIENT");
-
+		serverConnection = client.connection;
 	}
 
 	public override void OnClientConnect(NetworkConnection conn) {
@@ -73,12 +97,14 @@ public class GameManager : NetworkManager {
 	}
 
 
+	private GameObject currentPlayerIG;
 
 	public override void OnServerAddPlayer(NetworkConnection conn, short playerControllerId){
 		Debug.LogWarning("Add Player");
 		GameObject player = (GameObject)Instantiate(playerPrefab, spawnPosition/*spawnPoints[connectionNumber].position*/, Quaternion.identity);
 		NetworkServer.AddPlayerForConnection(conn, player, playerControllerId);
-		RefreshObservables()
+		currentPlayerIG = player;
+		//RefreshObservables ();
 		connectionNumber += 1;
 	}
 

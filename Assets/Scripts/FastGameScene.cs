@@ -36,6 +36,9 @@ public class FastGameScene : NetworkBehaviour {
 	[SerializeField]
 	Transform[] spawnPoints;
 	
+	[SerializeField]
+	public GameObject[] instantiateSpells;
+
 	private float targetTime = 4f;
 	private int currentState;
 	
@@ -52,9 +55,12 @@ public class FastGameScene : NetworkBehaviour {
 	
 	public List<GameObject> InGameEnnemies;
 
+	public List<Camera> InGameCameras;
+
 	void Start () {
 		currentState = (int)GameState.PlacementState;
 		List<GameObject> InGameEnnemies = new List<GameObject> ();
+		List<Camera> InGameCameras = new List<Camera> ();
 		hideOrShowGameUiOnF ();
 		panelButtons.gameObject.SetActive (false);
 		placementCamera.enabled = true;
@@ -81,19 +87,22 @@ public class FastGameScene : NetworkBehaviour {
 						spawnPosition = hit.point;
 						spawnPosition.y += 1;
 						//gM.AddPlayerForAGame(spawnPosition);
-						myAllies[numberOfSpawns-1] =(GameObject) Instantiate(myAllies[numberOfSpawns-1], spawnPosition, spawnPoints[0].rotation);
-						NetworkServer.Spawn(myAllies[numberOfSpawns-1]);
-						gM.AddObservables(myAllies[numberOfSpawns-1].GetComponent<NetworkIdentity>());
-						numberOfSpawns +=1;
+						if(isLocalPlayer)
+							Cmd_SpawnAlly();
+						else if (isServer)
+						{
+							Rpc_SpawnAlly();
+						}
+						else{
+							//SpawnAlly();
+						}
 					}
-					//myAllies[numberOfSpawns-1] =(GameObject) Instantiate(myAllies[numberOfSpawns-1], spawnPoints[numberOfSpawns-1].position, spawnPoints[numberOfSpawns-1].rotation);
-					//numberOfSpawns+=1;
 				}
 			}
 
 			if (targetTime <= 0.0f) {
 				numberOfSpawns=0;
-				timerEnded ();
+				timerEnded();
 			} else {
 				targetTime -= Time.deltaTime;
 				timerText.text = targetTime.ToString ("0.##");
@@ -102,20 +111,49 @@ public class FastGameScene : NetworkBehaviour {
 			if (Input.GetKeyDown (KeyCode.F)) {
 				hideOrShowGameUiOnF ();
 			}
-			
-			
 		}
 	}
-	
-	void timerEnded(){
+	[Command]
+	public void Cmd_SpawnAlly(){
+		Debug.LogError ("CmdSpawn");
+		myAllies[numberOfSpawns-1] = (GameObject) Instantiate(myAllies[numberOfSpawns-1], spawnPosition, spawnPoints[0].rotation);
+		//gM.AddAlly(ref myAllies, numberOfSpawns, spawnPosition);
+		NetworkServer.Spawn(myAllies[numberOfSpawns-1]);
+		gM.AddObservables(myAllies[numberOfSpawns-1].GetComponent<NetworkIdentity>());
+		
+		numberOfSpawns +=1;
+	}
+
+	[ClientRpc]
+	public void Rpc_SpawnAlly(){
+		Debug.LogError ("RpcSpawn");
+		myAllies[numberOfSpawns-1] = (GameObject) Instantiate(myAllies[numberOfSpawns-1], spawnPosition, spawnPoints[0].rotation);
+		//gM.AddAlly(ref myAllies, numberOfSpawns, spawnPosition);
+		NetworkServer.Spawn(myAllies[numberOfSpawns-1]);
+		gM.AddObservables(myAllies[numberOfSpawns-1].GetComponent<NetworkIdentity>());
+		
+		numberOfSpawns +=1;
+		//Cmd_SpawnAlly ();
+	}
+	[ClientCallback]
+	public void SpawnAlly(){
+		myAllies[numberOfSpawns-1] = (GameObject) Instantiate(myAllies[numberOfSpawns-1], spawnPosition, spawnPoints[0].rotation);
+		//gM.AddAlly(ref myAllies, numberOfSpawns, spawnPosition);
+		NetworkServer.Spawn(myAllies[numberOfSpawns-1]);
+		gM.AddObservables(myAllies[numberOfSpawns-1].GetComponent<NetworkIdentity>());
+		//Cmd_SpawnAlly ();
+		numberOfSpawns +=1;
+	}
+	 public void timerEnded(){
+		if (currentPlayer.moverScript.enabled)
+			currentPlayer.playerCamera.gameObject.SetActive (true);
 		timerText.gameObject.SetActive (false);
 		currentState = (int)GameState.ActionState;
 		hideOrShowGameUiOnF ();
 		panelButtons.gameObject.SetActive (true);
 		placementCamera.gameObject.SetActive (false);
+		//ManageCameras ();
 		//initializeButtons (ref spellButtonsFSG, currentPlayer);
-		
-		currentPlayer.playerCamera.gameObject.SetActive (true);
 		messageText.text = "Défendez à tout prix le totem !";
 	}
 
@@ -127,13 +165,13 @@ public class FastGameScene : NetworkBehaviour {
 				GameUIDiscoveredOnF[i].SetActive (false);
 		}
 	}
+
 	private Button[] spellButtonsFSG;
 
 	public void initializeButtons(ref Button[] spellButtons, Player p){
 		//spellButtonsFSG = spellButtons;
 		currentPlayer = p;
 		for (int i=0;i<spellButtons.Length && i< buttonsPanelButtons.Length; i++) {
-			
 			Debug.LogWarning ("Initialize Button " + i);
 			AddListener(buttonsPanelButtons[i], "init");
 			spellButtons[i] = buttonsPanelButtons[i];
@@ -141,8 +179,12 @@ public class FastGameScene : NetworkBehaviour {
 	}
 	
 	void AddListener(Button b, string value){
-		
 		Debug.LogWarning ("Add Listener" + b.ToString());
 		b.onClick.AddListener(() => currentPlayer.btnClicked(b));
+	}
+
+	public void getInstantiateSpells(Player p){
+		p.spellAnimation = instantiateSpells;
+
 	}
 }

@@ -8,8 +8,6 @@ public class Mover : NetworkBehaviour {
 	[SyncVar]
 	private Quaternion syncRot;
 
-
-
 	public Collider collider;
 
 	public Transform cameraHolder;
@@ -49,6 +47,8 @@ public class Mover : NetworkBehaviour {
 
 	private float distance = 4f;
 
+	public float jumpForce = 3f;
+
 	// Use this for initialization
 	void Start () {
 
@@ -57,7 +57,6 @@ public class Mover : NetworkBehaviour {
 	// Update is called once per frame
 	void Update () {
 		InputMovement();
-		InputRotation ();	
 		if ( Input.GetKeyDown(KeyCode.W)){
 			currentRotation += 180.0f;
 		}
@@ -75,7 +74,7 @@ public class Mover : NetworkBehaviour {
 			Quaternion rotationAngle = Quaternion.Euler( 0.0f, currentRotation, 0.0f );
 			
 			// update Character position and rotation
-			myTransform.position = myTransform.position + moveVector;
+			//myTransform.position = myTransform.position + moveVector;
 			myTransform.rotation = rotationAngle;
 			
 			// update Camera position and rotation
@@ -102,13 +101,8 @@ public class Mover : NetworkBehaviour {
 
 					AjustRotationOfCamera(1f);
 				}     
-			}           
-			
-			if(Input.GetKeyDown(KeyCode.Space)){
-				rigidbody.AddForce(Vector3.up *300f);
-			}
-			
-			
+			}      
+
 			if(Input.GetAxis("Mouse ScrollWheel") > 0){
 				if(distance >5f){
 					Vector3 angles = myTransform.eulerAngles;
@@ -128,6 +122,10 @@ public class Mover : NetworkBehaviour {
 					theCamera.transform.position = newPosition;
 					AjustRotationOfCamera(-1f);
 				}
+			}
+
+			if(Input.GetKeyDown(KeyCode.Space)){
+				rigidbody.AddForce(Vector3.up * 100f * jumpForce);
 			}
 		}
 
@@ -161,6 +159,9 @@ public class Mover : NetworkBehaviour {
 	}
 
 	void FixedUpdate(){		
+		//TransmitMotion();
+		//LerpMotion();
+		
 		TransmitMotion();
 		LerpMotion();
 	}
@@ -202,7 +203,7 @@ public class Mover : NetworkBehaviour {
 		Vector3 vectorMove = Vector3.zero;
 		if (Input.GetKey (KeyCode.Z)) {
 			Vector3 g = theCamera.transform.forward;
-			g.y=0;
+			//g.y=0;
 			vectorMove+=g;
 			//rigidbody.MovePosition (rigidbody.position + theCamera.transform.forward * speed * Time.deltaTime);
 			simultaneousMovement+=1;
@@ -229,10 +230,6 @@ public class Mover : NetworkBehaviour {
 			rigidbody.MovePosition (rigidbody.position + vectorMove.normalized * speed * Time.deltaTime);
 		simultaneousMovement = 0;
 	}	
-
-	void InputRotation(){
-
-	}
 
 	float ClampAngle (float theAngle){
 		if ( theAngle < -360.0f )

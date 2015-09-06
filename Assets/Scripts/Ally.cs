@@ -17,32 +17,33 @@ public class Ally : NetworkBehaviour {
 	private float posThreshold = 0.5f;
 	private float rotThreshold = 5;
 	
+	public float moveSpeed = 10.0f;
+	public Vector3 velocity;
 	private float rateSync = 10f;
-	// Use this for initialization
+
 	void Start () {
 		myTransform = transform;
 	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
 
-	void FixedUpdate(){		
-		TransmitMotion();
-		LerpMotion();
+	void FixedUpdate(){
+		if (!base.isServer)
+			return;
+		// transform bullet on the server
+		int i = Random.Range (2, 18);
+		if(i%2==0)
+			transform.position += transform.forward * Time.deltaTime * moveSpeed;
+		else
+			transform.position += transform.forward * Time.deltaTime * moveSpeed;
 	}
-	
+	/*
 	protected void LerpMotion () {
 		if (!isLocalPlayer) {
-			//Debug.LogWarning ("LerpPosition");
 			myTransform.position = Vector3.Lerp (myTransform.position, syncPos, Time.deltaTime * rateSync);
 		}
 	}
 	
 	[Command]
 	protected void CmdProvideMotionToServer () {
-		//Debug.LogWarning ("CmdPosition");
 		syncPos = myTransform.position;
 		syncRot = myTransform.rotation;
 	}
@@ -51,18 +52,18 @@ public class Ally : NetworkBehaviour {
 	protected void TransmitMotion(){
 		if (!isServer)
 			return;
-		if (Vector3.Distance(myTransform.position, lastPos) > posThreshold || Quaternion.Angle(myTransform.rotation, lastRot) > rotThreshold)
-		{
+		if (Vector3.Distance(myTransform.position, lastPos) > posThreshold || Quaternion.Angle(myTransform.rotation, lastRot) > rotThreshold) {
 			lastPos = myTransform.position;
 			lastRot = myTransform.rotation;
 			
 			syncPos = myTransform.position;
 			syncRot = myTransform.rotation;
 		}
+
 		if (isLocalPlayer) {
 			CmdProvideMotionToServer ();
 		}
 	}
-
+	*/
 
 }
