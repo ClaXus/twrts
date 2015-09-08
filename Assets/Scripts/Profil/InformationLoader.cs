@@ -16,7 +16,7 @@ public class InformationLoader : MonoBehaviour {
 		LoadPlayerInformations();
 	}
 
-	public void LoadPlayerInformations() {
+	public PlayerInformations LoadPlayerInformations() {
 		string filePath = Application.persistentDataPath + "info.bin";
 		if (File.Exists(filePath)) {
 			BinaryFormatter formatter = new BinaryFormatter();
@@ -25,6 +25,8 @@ public class InformationLoader : MonoBehaviour {
 			informations = (PlayerInformations)formatter.Deserialize(fS);
 			
 			fS.Close();
+
+			return informations;
 		}
 		else {
 			BinaryFormatter formatter = new BinaryFormatter();
@@ -36,6 +38,7 @@ public class InformationLoader : MonoBehaviour {
 			
 			LoadPlayerInformations();
 		}
+		return null;
 	}
 
 	public void SavePlayerInformations(string playerPseudo, int playerMoney, int playerPoints, int[] playerStyle) {

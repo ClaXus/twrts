@@ -35,10 +35,11 @@ public class MagicalMover : MonoBehaviour {
 	}
 
 	void OnTriggerEnter(Collider other) {
-		Debug.LogWarning (other.name);
+		Debug.LogWarning ("ONTRIGGER : " + other.name);
 		if(other.name.Contains("Enemy")){
 			//Destroy(other.gameObject);
 			Debug.LogWarning("Degats : " + ((SpellDirected)currentSpell).value);
+			other.gameObject.GetComponent<Enemy>().dropHP(((SpellDirected)currentSpell).value);
 		}
 	}
 

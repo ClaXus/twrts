@@ -30,6 +30,10 @@ public class Player : NetworkBehaviour {
 	[SerializeField]
 	public GameObject[] spellAnimation;
 
+	public int playerCC=2;
+	public int playerF=2;
+	public int playerRes=1;
+	public int playerVit=1;
 	
 	//public Player gm;
 
@@ -43,6 +47,9 @@ public class Player : NetworkBehaviour {
 		if (isLocalPlayer) {
 			moverScript.enabled = true;
 		}
+		//InformationLoader iLoader = new InformationLoader ();
+		//PlayerInformations pI = iLoader.LoadPlayerInformations ();
+		//int[] stats = pI.Style;
 
 		myPlayer = this;
 		FgS = FindObjectOfType(typeof(FastGameScene)) as FastGameScene;
@@ -162,7 +169,6 @@ public class Player : NetworkBehaviour {
 	}
 
 	private Initiation init;
-
 
 	void OnTriggerEnter(Collider other) {
 		Debug.LogWarning (other.name);

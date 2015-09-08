@@ -170,16 +170,17 @@ public class FastGameScene : NetworkBehaviour {
 
 	public void initializeButtons(ref Button[] spellButtons, Player p){
 		//spellButtonsFSG = spellButtons;
+		Debug.LogWarning ("Initialize");
 		currentPlayer = p;
 		for (int i=0;i<spellButtons.Length && i< buttonsPanelButtons.Length; i++) {
-			Debug.LogWarning ("Initialize Button " + i);
+			//Debug.LogWarning ("Initialize Button " + i);
 			AddListener(buttonsPanelButtons[i], "init");
 			spellButtons[i] = buttonsPanelButtons[i];
 		}
 	}
 	
 	void AddListener(Button b, string value){
-		Debug.LogWarning ("Add Listener" + b.ToString());
+		//Debug.LogWarning ("Add Listener" + b.ToString());
 		b.onClick.AddListener(() => currentPlayer.btnClicked(b));
 	}
 
