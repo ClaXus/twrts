@@ -32,9 +32,9 @@ public class Enemy : NetworkBehaviour {
 
 	Transform myTransform;
 
-	Transform target;
+	public Transform target;
 
-	void Awake () {
+	void Start () {
 		gO = gameObject;
 		nMA = GetComponent<NavMeshAgent>();
 		target = GameObject.FindGameObjectWithTag("Player").transform;

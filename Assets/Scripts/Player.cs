@@ -43,13 +43,16 @@ public class Player : NetworkBehaviour {
 	private int nbPhysicAttacks=0;
 	private Vector3 spawnPosition;
 
+	int[] stats;
+
 	void Start () {
 		if (isLocalPlayer) {
 			moverScript.enabled = true;
 		}
 		//InformationLoader iLoader = new InformationLoader ();
 		//PlayerInformations pI = iLoader.LoadPlayerInformations ();
-		//int[] stats = pI.Style;
+		//if(pI!=null)
+		//	stats = pI.Style;
 
 		myPlayer = this;
 		FgS = FindObjectOfType(typeof(FastGameScene)) as FastGameScene;
@@ -59,6 +62,7 @@ public class Player : NetworkBehaviour {
 		} else {
 			Initiation init = FindObjectOfType(typeof(Initiation)) as Initiation;
 			init.initializeButtons (ref spellButtons, this);
+			init.getInstantiateSpells(this);
 		}
 	}
 
@@ -171,7 +175,8 @@ public class Player : NetworkBehaviour {
 	private Initiation init;
 
 	void OnTriggerEnter(Collider other) {
-		Debug.LogWarning (other.name);
+
+		//Debug.LogWarning (other.name);
 		if(other.name.Equals("Spotlight")){
 			init = (FindObjectOfType(typeof(Initiation)) as Initiation);
 			init.StepAfterLight();

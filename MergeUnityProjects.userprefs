@@ -1,12 +1,17 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Enemy.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\GameManager.cs">
     <Files>
       <File FileName="Assets\Scripts\Abilities\SpellDirected.cs" Line="16" Column="16" />
-      <File FileName="Assets\Scripts\MagicalMover.cs" Line="42" Column="86" />
+      <File FileName="Assets\Scripts\MagicalMover.cs" Line="31" Column="1" />
       <File FileName="Assets\Scripts\Abilities\Spell.cs" Line="16" Column="18" />
       <File FileName="Assets\Scripts\Ally.cs" Line="16" Column="32" />
-      <File FileName="Assets\Enemy.cs" Line="50" Column="1" />
+      <File FileName="Assets\Enemy.cs" Line="35" Column="9" />
+      <File FileName="Assets\Scripts\FastGameScene.cs" Line="148" Column="41" />
+      <File FileName="Assets\Scripts\Player.cs" Line="57" Column="19" />
+      <File FileName="Assets\Scripts\Profil\InformationLoader.cs" Line="21" Column="39" />
+      <File FileName="Assets\Scripts\Profil\PlayerInformations.cs" Line="14" Column="2" />
+      <File FileName="Assets\Scripts\GameManager.cs" Line="85" Column="59" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

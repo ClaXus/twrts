@@ -13,10 +13,11 @@ public class InformationLoader : MonoBehaviour {
 	}
 
 	void Awake() {
+		//SavePlayerInformations ("ClaXus", 200, 100, new int[4]{2,2,1,1});
 		LoadPlayerInformations();
 	}
 
-	public PlayerInformations LoadPlayerInformations() {
+	PlayerInformations LoadPlayerInformations() {
 		string filePath = Application.persistentDataPath + "info.bin";
 		if (File.Exists(filePath)) {
 			BinaryFormatter formatter = new BinaryFormatter();

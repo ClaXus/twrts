@@ -54,6 +54,11 @@ public class Initiation : NetworkBehaviour {
 	[SerializeField]
 	Light mySpot; 
 
+	[SerializeField]
+	GameObject[] spawnPoints;
+	
+	[SerializeField]
+	public GameObject[] instantiateSpells;
 
 	void Start () {
 		panelButtons.gameObject.SetActive (true);
@@ -85,19 +90,21 @@ public class Initiation : NetworkBehaviour {
 			LeftButtonText.text = "Proximité";
 			RightButtonText.text = "Distance";
 		} else if (numeroStep == 3) {
-			stats [numeroStep - 1] += 1;
-			LeftButtonText.text = "Proximité";
-			RightButtonText.text = "Distance";
+			stats [2] += 1;
+			LeftButtonText.text = "Projection";
+			RightButtonText.text = "Distopie";
 		} else if (numeroStep == 4) {
-			stats [numeroStep - 1] += 1;
+			stats [1] += 1;
 			LeftButtonText.text = "Proximité";
 			RightButtonText.text = "Distance";
 		} else {
+			stats [0] += 1;
 			LeftButton.gameObject.SetActive(false);
 			RightButton.gameObject.SetActive(false);
 			
-			messageText.text = "Puissance.";
-			explicationText.text = "Le combat" + System.Environment.NewLine + "est" + System.Environment.NewLine + "une nécessité";
+			messageText.text = "Tracer.";
+			explicationText.text = "L'issue du combat" + System.Environment.NewLine + "dépend" + System.Environment.NewLine + "de ton destin";
+			Cmd_SpawnAlly();
 		}
 		numeroStep += 1;
 	}
@@ -112,18 +119,20 @@ public class Initiation : NetworkBehaviour {
 			LeftButtonText.text = "Proximité";
 			RightButtonText.text = "Distance";
 		} else if (numeroStep == 3) {
-			stats [numeroStep - 1] += 1;
-			LeftButtonText.text = "Proximité";
-			RightButtonText.text = "Distance";
+			stats [0] += 1;
+			LeftButtonText.text = "Projection";
+			RightButtonText.text = "Distopie";
 		} else if (numeroStep == 4) {
-			stats [numeroStep - 1] += 1;
-			LeftButtonText.text = "Proximité";
-			RightButtonText.text = "Distance";
+			stats [3] += 1;
+			LeftButtonText.text = "Unaire";
+			RightButtonText.text = "Binaire";
 		} else {
+			stats [1] += 1;
 			LeftButton.gameObject.SetActive(false);
 			RightButton.gameObject.SetActive(false);
 			messageText.text = "Tracer.";
 			explicationText.text = "Le combat" + System.Environment.NewLine + "est" + System.Environment.NewLine + "une nécessité";
+			Cmd_SpawnAlly();
 		}
 		numeroStep += 1;
 	}
@@ -141,12 +150,18 @@ public class Initiation : NetworkBehaviour {
 			spellButtons[i] = buttonsPanelButtons[i];
 		}
 	}
-	
+	[Command]
+	public void Cmd_SpawnAlly(){
+		Debug.LogError ("CmdSpawn");
+		myAllies[numberOfSpawns] = (GameObject) Instantiate(myAllies[numberOfSpawns], spawnPoints[numberOfSpawns].transform.position,  spawnPoints[numberOfSpawns].transform.rotation);
+		NetworkServer.Spawn(myAllies[numberOfSpawns-1]);
+		numberOfSpawns +=1;
+	}
+
 	void AddListener(Button b, string value){
 		Debug.LogWarning ("Add Listener" + b.ToString());
 		b.onClick.AddListener(() => currentPlayer.btnClicked(b));
 	}
-
 
 	bool StepAfterLightOk = true;
 	public void StepAfterLight(){
@@ -162,4 +177,7 @@ public class Initiation : NetworkBehaviour {
 		}
 	}
 
+	public void getInstantiateSpells(Player p){
+		p.spellAnimation = instantiateSpells;
+	}
 }

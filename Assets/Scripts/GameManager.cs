@@ -39,7 +39,6 @@ public class GameManager : NetworkManager {
 
 	void Update(){
 
-
 	}
 
 	public GameObject AddPlayerForAGame(Vector3 spawningPosition){
@@ -73,13 +72,11 @@ public class GameManager : NetworkManager {
 	}
 
 	public void StartParty(){
-		//StartHost ();
+		StartHost ();
 	}
 
 	public void RefreshHostList(){
 		//StartMatchMaker ();
-
-
 	}
 
 

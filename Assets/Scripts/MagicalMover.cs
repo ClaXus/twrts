@@ -40,6 +40,8 @@ public class MagicalMover : MonoBehaviour {
 			//Destroy(other.gameObject);
 			Debug.LogWarning("Degats : " + ((SpellDirected)currentSpell).value);
 			other.gameObject.GetComponent<Enemy>().dropHP(((SpellDirected)currentSpell).value);
+			
+			gameObject.SetActive(false);
 		}
 	}
 
