@@ -34,17 +34,23 @@ public class Enemy : NetworkBehaviour {
 
 	public Transform target;
 
+	string toAttackUnitTag="Totem";
+
+	bool firstTime = true;
+
 	void Start () {
 		gO = gameObject;
 		nMA = GetComponent<NavMeshAgent>();
-		target = GameObject.FindGameObjectWithTag("Player").transform;
+		target = GameObject.FindGameObjectWithTag(toAttackUnitTag).transform;
 		//nMA.CalculatePath (transform.position, nMA.path);
 		myTransform = transform;
 		
 		if(isServer)
 		{
+			//Debug.LogWarning ("GoToPlayer0");
 			StartCoroutine(DoCheck());
 		}
+
 		//nMA.destination = target.position;
 	}
 
@@ -65,7 +71,10 @@ public class Enemy : NetworkBehaviour {
 		}
 		
 		if(target == null) {
-			target = GameObject.FindGameObjectWithTag("Player").transform;
+			target = GameObject.FindGameObjectWithTag(toAttackUnitTag).transform;
+			if(target==null && firstTime){ // Initiation Scene
+				toAttackUnitTag = "Player";
+			}
 		}
 	}
 	
@@ -78,11 +87,19 @@ public class Enemy : NetworkBehaviour {
 	}
 
 	void SetNavDestination(Transform dest) {
+		//Debug.LogWarning ("GoToPlayer2");
 		nMA.SetDestination(dest.position);
+		nMA.Resume ();
 	}
 
-	void Update () {
+	void FixedUpdate () {
 		//nMA.SetDestination(target.position);
+		
+		if(target==null && isServer)
+		{
+			//Debug.LogWarning("SearchPlayer");
+			StartCoroutine(DoCheck());
+		}
 	}
 
 	public void dropHP(int damages){
@@ -100,6 +117,13 @@ public class Enemy : NetworkBehaviour {
 		mR.material = baseMaterial;
 		if (HP < 0)
 			Destroy (gO);
+	}
+
+	void OnTriggerEnter(Collider other) {
+		Debug.LogWarning ("ONTRIGGER Enemy : " + other.name);
+		if(other.name.Contains(toAttackUnitTag)){
+
+		}
 	}
 
 }

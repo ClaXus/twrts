@@ -79,12 +79,15 @@ public class GameManager : NetworkManager {
 		//StartMatchMaker ();
 	}
 
-
-
+	public void EndGame(){
+		StopServer ();
+	}
+	
 	public override void OnStartClient (NetworkClient client)
 	{
 		Debug.LogWarning ("START CLIENT");
 		serverConnection = client.connection;
+		ClientScene.AddPlayer (client.connection, connectionNumber);
 	}
 
 	public override void OnClientConnect(NetworkConnection conn) {
@@ -107,5 +110,11 @@ public class GameManager : NetworkManager {
 
 	public short getConnectionNumber(){
 		return connectionNumber;
+	}
+
+	public void StartInitiationLevel(){
+		onlineScene = "Initiation";
+		StartHost ();
+
 	}
 }

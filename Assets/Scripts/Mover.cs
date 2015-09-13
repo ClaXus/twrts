@@ -48,6 +48,9 @@ public class Mover : NetworkBehaviour {
 	private float distance = 4f;
 
 	public float jumpForce = 3f;
+	private float jumpForceBase=3f;
+	private float speedBase=7f;
+
 
 	// Use this for initialization
 	void Start () {
@@ -145,7 +148,7 @@ public class Mover : NetworkBehaviour {
 		}
 		if (theCamera.transform.eulerAngles.x > maxRotation - 0.1f) {
 			theCamera.transform.Rotate (-1, 0, 0);
-			Debug.LogWarning("TOOUP");
+			//Debug.LogWarning("TOOUP");
 			totalRotate -= 1;
 		} else if (totalRotate <-0.1f) {
 			theCamera.transform.Rotate (1, 0, 0);
@@ -243,4 +246,10 @@ public class Mover : NetworkBehaviour {
 		
 		return theAngle;
 	}
+	public void changeSpeed(int vitessePlus){
+		jumpForce = jumpForceBase + vitessePlus/2;
+		movementSpeed = vitessePlus;
+		speed = speedBase + vitessePlus;
+	}
+
 }

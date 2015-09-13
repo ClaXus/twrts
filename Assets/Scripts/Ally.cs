@@ -3,14 +3,42 @@ using System.Collections;
 using UnityEngine.Networking;
 
 public class Ally : NetworkBehaviour {
+	
+	NavMeshAgent nMA;
 
 	[SyncVar] 
 	private Vector3 syncPos;
 	[SyncVar]
 	private Quaternion syncRot;
 
-	private Transform myTransform;
+	[SerializeField]
+	Material redMaterial;
 	
+	[SerializeField]
+	Material baseMaterial;
+	
+	[SerializeField]
+	int HP=1000;
+	
+	[SerializeField]
+	TextMesh damagesInfo;
+	
+	[SerializeField]
+	int BaseAttackForce = 33;
+	
+	[SerializeField]
+	int SpecialAttackForce = 145;
+
+	[SerializeField]
+	MeshRenderer mR;
+	
+	
+	public Transform target;
+
+	private Transform myTransform;
+
+	private GameObject targetGO;
+
 	private Vector3 lastPos;
 	private Quaternion lastRot;
 	//private float lerpRate = 10;
@@ -21,49 +49,106 @@ public class Ally : NetworkBehaviour {
 	public Vector3 velocity;
 	private float rateSync = 10f;
 
+	
+	private System.Random rd = new System.Random ();
+	
 	void Start () {
 		myTransform = transform;
+		
+		nMA = GetComponent<NavMeshAgent>();
+		target = GameObject.FindGameObjectWithTag("Enemy").transform;
+		if(isServer)
+		{
+			StartCoroutine(DoCheck());
+		}
 	}
 
 	void FixedUpdate(){
-		if (!base.isServer)
-			return;
-		// transform bullet on the server
-		int i = Random.Range (2, 18);
-		if(i%2==0)
-			transform.position += transform.forward * Time.deltaTime * moveSpeed;
-		else
-			transform.position += transform.forward * Time.deltaTime * moveSpeed;
-	}
-	/*
-	protected void LerpMotion () {
-		if (!isLocalPlayer) {
-			myTransform.position = Vector3.Lerp (myTransform.position, syncPos, Time.deltaTime * rateSync);
+		if(target==null && isServer)
+		{
+			StartCoroutine(DoCheck());
 		}
 	}
-	
-	[Command]
-	protected void CmdProvideMotionToServer () {
-		syncPos = myTransform.position;
-		syncRot = myTransform.rotation;
-	}
-	
-	[ClientCallback]
-	protected void TransmitMotion(){
-		if (!isServer)
-			return;
-		if (Vector3.Distance(myTransform.position, lastPos) > posThreshold || Quaternion.Angle(myTransform.rotation, lastRot) > rotThreshold) {
-			lastPos = myTransform.position;
-			lastRot = myTransform.rotation;
-			
-			syncPos = myTransform.position;
-			syncRot = myTransform.rotation;
-		}
 
-		if (isLocalPlayer) {
-			CmdProvideMotionToServer ();
+	IEnumerator DoCheck()
+	{
+		for(;;)
+		{
+			SearchForTarget();
+			MoveToTarget();
+			yield return new WaitForSeconds(0.2f);
 		}
 	}
-	*/
+	void SearchForTarget()
+	{
+		if(!isServer)
+		{
+			return;
+		}
+		
+		if(target == null) {
+			targetGO = GameObject.FindGameObjectWithTag("Enemy");
+			if(targetGO)
+				target = targetGO.transform;
+		}
+	}
+	
+	void MoveToTarget()
+	{
+		if(target != null && isServer)
+		{
+			SetNavDestination(target);
+		}
+	}
+	
+	void SetNavDestination(Transform dest) {
+		nMA.SetDestination(dest.position);
+	}
+
+	public void dropHP(int damages){
+		HP -= damages;
+		damagesInfo.text = "" + damages;
+		damagesInfo.gameObject.SetActive (true);
+		StartCoroutine (takeDamages());
+	}
+	
+	IEnumerator takeDamages(){
+		mR.material = redMaterial;
+		yield return new WaitForSeconds (0.3f);
+		damagesInfo.gameObject.SetActive (false);
+		mR.material = baseMaterial;
+		if (HP < 0)
+			Destroy (gameObject);
+	}
+
+	
+	void OnTriggerEnter(Collider other) {
+		Debug.LogWarning ("ONTRIGGER Ally : " + other.name);
+		if(other.name.Contains("Enemy")){
+			if(rd.NextDouble()>0.75){
+				Debug.LogWarning("Dégats : " + SpecialAttackForce);
+				other.gameObject.GetComponent<Enemy>().dropHP(SpecialAttackForce);
+			}
+			else{
+				Debug.LogWarning("Dégats : " + BaseAttackForce);
+				other.gameObject.GetComponent<Enemy>().dropHP(BaseAttackForce);
+			}
+			//gameObject.SetActive(false);
+		}
+	}
+	void OnTriggerStay(Collider other) {
+		Debug.LogWarning ("ONTRIGGER Ally : " + other.name);
+
+		if(other.name.Contains("Enemy") && (rd.NextDouble()>0.75)){
+			if(rd.NextDouble()>0.75){
+				Debug.LogWarning("Dégats : " + SpecialAttackForce);
+				other.gameObject.GetComponent<Enemy>().dropHP(SpecialAttackForce);
+			}
+			else{
+				Debug.LogWarning("Dégats : " + BaseAttackForce);
+				other.gameObject.GetComponent<Enemy>().dropHP(BaseAttackForce);
+			}
+		}    
+	}
 
 }

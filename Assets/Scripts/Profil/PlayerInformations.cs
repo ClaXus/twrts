@@ -34,4 +34,13 @@ public class PlayerInformations {
 		get { return currentStyle; }
 		set { currentStyle = value; }
 	}
+
+	[SerializeField]
+	bool[] choices;
+	
+	public bool[] Choices	{
+		get { return choices; }
+		set { choices = value; }
+	}
+
 }

@@ -20,9 +20,6 @@ public class Player : NetworkBehaviour {
 	
 	[SerializeField]
 	GameObject gameObject;
-	
-	[SerializeField]
-	Player myPlayer;
 
 	[SerializeField]
 	public Camera playerCamera;
@@ -49,12 +46,12 @@ public class Player : NetworkBehaviour {
 		if (isLocalPlayer) {
 			moverScript.enabled = true;
 		}
+
+
 		//InformationLoader iLoader = new InformationLoader ();
 		//PlayerInformations pI = iLoader.LoadPlayerInformations ();
 		//if(pI!=null)
 		//	stats = pI.Style;
-
-		myPlayer = this;
 		FgS = FindObjectOfType(typeof(FastGameScene)) as FastGameScene;
 		if (FgS != null) {
 			FgS.initializeButtons (ref spellButtons, this);
@@ -118,7 +115,6 @@ public class Player : NetworkBehaviour {
 		yield return StartCoroutine( changeAspect() );
 	}
 
-
 	public IEnumerator changeAspect(){
 		if (currentButton.interactable) {
 			Button veryCurrentButton = currentButton;
@@ -129,9 +125,7 @@ public class Player : NetworkBehaviour {
 			veryCurrentButton.colors = cb; 
 			yield return new WaitForSeconds (associateSpells[currentIndex].castTime);
 			yield return StartCoroutine( launchSpell() );
-			yield return new WaitForSeconds (associateSpells[currentIndex].cooldown);
-
-			//Destroy(currentAnimation);
+			yield return new WaitForSeconds (associateSpells[currentIndex].cooldown-0.2f);
 			cb.normalColor = Color.white;
 			cb.highlightedColor = Color.white;
 			veryCurrentButton.interactable = true;
@@ -159,7 +153,7 @@ public class Player : NetworkBehaviour {
 			
 			currentAnimation.gameObject.SetActive(true);
 
-			currentAnimation.GetComponent<MagicalMover>().CanGo(moverScript.gameObject.transform.forward, associateSpells[currentIndex]);
+			currentAnimation.GetComponent<MagicalMover>().CanGo(moverScript.gameObject.transform.forward, associateSpells[currentIndex], playerCC, playerF);
 		}
 		yield return null;
 	}
@@ -183,6 +177,12 @@ public class Player : NetworkBehaviour {
 		}
 	}
 
-
+	public void updateStats(int []stats){
+		playerCC	=stats[0];
+		playerF		=stats[1];
+		playerRes	=stats[2];
+		playerVit	=stats[3];
+		moverScript.changeSpeed (playerVit);
+	}
 
 }

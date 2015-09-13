@@ -51,6 +51,8 @@
      <Compile Include="Assets\Scripts\Abilities\Spell.cs" />
      <Compile Include="Assets\Scripts\Abilities\SpellDirected.cs" />
      <Compile Include="Assets\Scripts\Ally.cs" />
+     <Compile Include="Assets\Scripts\DisplayUHD.cs" />
+     <Compile Include="Assets\Scripts\EnemyManager.cs" />
      <Compile Include="Assets\Scripts\FastGameScene.cs" />
      <Compile Include="Assets\Scripts\GameManager.cs" />
      <Compile Include="Assets\Scripts\Initiation.cs" />
@@ -63,6 +65,7 @@
      <Compile Include="Assets\Scripts\ScreensScripts\OptionScreenManager.cs" />
      <Compile Include="Assets\Scripts\ScreensScripts\ScheduleMenu.cs" />
      <Compile Include="Assets\Scripts\ScreensScripts\SwitchScreenGui.cs" />
+     <Compile Include="Assets\Scripts\UserProfileDisplay.cs" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>
